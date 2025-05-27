@@ -1,0 +1,196 @@
+{
+    "extName": {
+      "message": "SmartRate Converter",
+      "description": "The name of the extension."
+    },
+    "extDescription": {
+      "message": "An intelligent and quick currency converter.",
+      "description": "Description of the extension."
+    },
+    "langToggle": {
+      "message": "中",
+      "description": "Button text to switch to Chinese."
+    },
+    "favoritesTitle": {
+      "message": "Favorites",
+      "description": "Title for the favorites section."
+    },
+    "noFavorites": {
+      "message": "No favorite pairs yet. Add some!",
+      "description": "Message when there are no favorites."
+    },
+    "sourceCurrencyLabel": {
+      "message": "From",
+      "description": "Label for the source currency selector."
+    },
+    "targetCurrencyLabel": {
+      "message": "To",
+      "description": "Label for the target currency selector."
+    },
+    "searchCurrencyPlaceholder": {
+      "message": "Search currency (e.g., USD)",
+      "description": "Placeholder for currency search input."
+    },
+    "swapCurrenciesTooltip": {
+      "message": "Swap Currencies",
+      "description": "Tooltip for the swap currencies button."
+    },
+    "addToFavoritesTooltip": {
+      "message": "Add to Favorites",
+      "description": "Tooltip for the add to favorites button (when not favorited)."
+    },
+    "removeFromFavoritesTooltip": {
+      "message": "Remove from Favorites",
+      "description": "Tooltip for the remove from favorites button (when favorited)."
+    },
+    "amountLabel": {
+      "message": "Amount",
+      "description": "Label for the amount input field."
+    },
+    "enterAmountPlaceholder": {
+      "message": "Enter amount",
+      "description": "Placeholder for the amount input field."
+    },
+    "resultLabel": {
+      "message": "Result",
+      "description": "Label for the conversion result."
+    },
+    "copyResultTooltip": {
+      "message": "Copy Result",
+      "description": "Tooltip for the copy result button."
+    },
+    "copiedTooltip": {
+      "message": "Copied!",
+      "description": "Tooltip text after result is copied."
+    },
+    "convertButton": {
+      "message": "Convert",
+      "description": "Text for the convert button."
+    },
+    "convertingButton": {
+      "message": "Converting...",
+      "description": "Text for the convert button while loading."
+    },
+    "historyTitle": {
+      "message": "History",
+      "description": "Title for the history section."
+    },
+    "clearHistoryButton": {
+      "message": "Clear History",
+      "description": "Text for the clear history button."
+    },
+    "noHistory": {
+      "message": "No conversion history yet.",
+      "description": "Message when there is no history."
+    },
+    "offlineRateUsed": {
+      "message": "Using cached rates from $time$ ago.",
+      "description": "Message when offline rates are used. $time$ is a placeholder.",
+      "placeholders": {
+        "time": {
+          "content": "$1",
+          "example": "5 minutes"
+        }
+      }
+    },
+    "staleCacheUsed": {
+      "message": "Network error. Using stale cache from $time$ ago.",
+      "description": "Message when stale cache is used due to network error.",
+      "placeholders": {
+          "time": {
+            "content": "$1",
+            "example": "2 hours"
+          }
+        }
+    },
+    "liveRate": {
+      "message": "Live rate.",
+      "description": "Message when live rates are used."
+    },
+    "hoursAgo": {
+      "message": "$hours$ hours ago",
+      "description": "Time difference in hours.",
+      "placeholders": {
+        "hours": {
+          "content": "$1",
+          "example": "2"
+        }
+      }
+    },
+    "minutesAgo": {
+      "message": "$minutes$ minutes ago",
+      "description": "Time difference in minutes.",
+      "placeholders": {
+        "minutes": {
+          "content": "$1",
+          "example": "15"
+        }
+      }
+    },
+    "secondsAgo": {
+      "message": "$seconds$ seconds ago",
+      "description": "Time difference in seconds.",
+      "placeholders": {
+        "seconds": {
+          "content": "$1",
+          "example": "30"
+        }
+      }
+    },
+    "apiFetchError": {
+      "message": "Could not fetch rates. Please check your API key or network.",
+      "description": "Generic API fetch error."
+    },
+    "apiCurrenciesError": {
+      "message": "Could not load currency list. Using fallback.",
+      "description": "Error when fetching supported currencies."
+    },
+    "apiDataError": {
+      "message": "Received invalid data from the server.",
+      "description": "Error when API returns unexpected data format."
+    },
+    "apiNetworkError": {
+      "message": "Network error. Please check your connection.",
+      "description": "Network error."
+    },
+    "rateUnavailableError": {
+      "message": "Rate for $currency$ is currently unavailable.",
+      "description": "Error when a specific currency rate is not in the fetched data.",
+      "placeholders": {
+          "currency": {
+            "content": "$1",
+            "example": "XYZ"
+          }
+        }
+    },
+    "invalidAmountError": {
+      "message": "Please enter a valid positive amount.",
+      "description": "Error for invalid amount input."
+    },
+    "selectCurrenciesError": {
+      "message": "Please select valid source and target currencies.",
+      "description": "Error when currencies are not selected or invalid."
+    },
+    "invalidBaseCurrencyError": {
+      "message": "Invalid base currency: $currency$. Cannot fetch rates.",
+      "description": "Error for invalid base currency.",
+       "placeholders": {
+          "currency": {
+            "content": "$1",
+            "example": "USX"
+          }
+        }
+    },
+    "cannotFavoritePairError": {
+      "message": "Cannot favorite. Please select two different, valid currencies.",
+      "description": "Error when trying to favorite an invalid pair."
+    },
+    "copyError": {
+      "message": "Failed to copy to clipboard.",
+      "description": "Error when clipboard copy fails."
+    },
+    "unknownError": {
+      "message": "An unknown error occurred.",
+      "description": "Generic fallback error message."
+    }
+  }

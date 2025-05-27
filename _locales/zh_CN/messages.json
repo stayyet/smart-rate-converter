@@ -1,0 +1,196 @@
+{
+    "extName": {
+      "message": "智能汇率转换",
+      "description": "扩展程序的名称。"
+    },
+    "extDescription": {
+      "message": "一个智能快捷的汇率转换工具。",
+      "description": "扩展程序的描述。"
+    },
+    "langToggle": {
+      "message": "EN",
+      "description": "切换到英文的按钮文字。"
+    },
+    "favoritesTitle": {
+      "message": "常用收藏",
+      "description": "收藏区标题。"
+    },
+    "noFavorites": {
+      "message": "暂无收藏的货币对，快添加一些吧！",
+      "description": "没有收藏时的提示信息。"
+    },
+    "sourceCurrencyLabel": {
+      "message": "从",
+      "description": "源货币选择器标签。"
+    },
+    "targetCurrencyLabel": {
+      "message": "到",
+      "description": "目标货币选择器标签。"
+    },
+    "searchCurrencyPlaceholder": {
+      "message": "搜索货币 (例如：USD)",
+      "description": "货币搜索输入框占位符。"
+    },
+    "swapCurrenciesTooltip": {
+      "message": "交换货币",
+      "description": "交换货币按钮的提示。"
+    },
+    "addToFavoritesTooltip": {
+      "message": "添加到收藏",
+      "description": "添加到收藏按钮的提示（未收藏时）。"
+    },
+    "removeFromFavoritesTooltip": {
+      "message": "从收藏中移除",
+      "description": "从收藏中移除按钮的提示（已收藏时）。"
+    },
+    "amountLabel": {
+      "message": "金额",
+      "description": "金额输入框标签。"
+    },
+    "enterAmountPlaceholder": {
+      "message": "请输入金额",
+      "description": "金额输入框占位符。"
+    },
+    "resultLabel": {
+      "message": "结果",
+      "description": "转换结果标签。"
+    },
+    "copyResultTooltip": {
+      "message": "复制结果",
+      "description": "复制结果按钮提示。"
+    },
+    "copiedTooltip": {
+      "message": "已复制!",
+      "description": "结果复制后的提示文字。"
+    },
+    "convertButton": {
+      "message": "转 换",
+      "description": "转换按钮文字。"
+    },
+    "convertingButton": {
+      "message": "转换中...",
+      "description": "加载时转换按钮文字。"
+    },
+    "historyTitle": {
+      "message": "历史记录",
+      "description": "历史记录区标题。"
+    },
+    "clearHistoryButton": {
+      "message": "清空历史",
+      "description": "清空历史按钮文字。"
+    },
+    "noHistory": {
+      "message": "暂无转换历史记录。",
+      "description": "没有历史记录时的提示。"
+    },
+    "offlineRateUsed": {
+      "message": "正在使用 $time$ 前的缓存汇率。",
+      "description": "使用离线汇率时的提示。$time$ 是占位符。",
+      "placeholders": {
+        "time": {
+          "content": "$1",
+          "example": "5 分钟"
+        }
+      }
+    },
+    "staleCacheUsed": {
+      "message": "网络错误，正在使用 $time$ 前的旧缓存数据。",
+      "description": "网络错误导致使用旧缓存时的提示。",
+      "placeholders": {
+          "time": {
+            "content": "$1",
+            "example": "2 小时"
+          }
+        }
+    },
+    "liveRate": {
+      "message": "实时汇率。",
+      "description": "使用实时汇率时的提示。"
+    },
+    "hoursAgo": {
+      "message": "$hours$ 小时前",
+      "description": "时间差（小时）。",
+      "placeholders": {
+        "hours": {
+          "content": "$1",
+          "example": "2"
+        }
+      }
+    },
+    "minutesAgo": {
+      "message": "$minutes$ 分钟前",
+      "description": "时间差（分钟）。",
+      "placeholders": {
+        "minutes": {
+          "content": "$1",
+          "example": "15"
+        }
+      }
+    },
+    "secondsAgo": {
+      "message": "$seconds$ 秒前",
+      "description": "时间差（秒）。",
+      "placeholders": {
+        "seconds": {
+          "content": "$1",
+          "example": "30"
+        }
+      }
+    },
+    "apiFetchError": {
+      "message": "无法获取汇率。请检查您的API密钥或网络连接。",
+      "description": "通用API获取错误。"
+    },
+    "apiCurrenciesError": {
+      "message": "无法加载货币列表。将使用备用列表。",
+      "description": "获取支持的货币列表时出错。"
+    },
+    "apiDataError": {
+      "message": "从服务器收到无效数据。",
+      "description": "API返回非预期数据格式错误。"
+    },
+    "apiNetworkError": {
+      "message": "网络错误，请检查您的网络连接。",
+      "description": "网络错误。"
+    },
+    "rateUnavailableError": {
+      "message": "货币 $currency$ 的汇率当前不可用。",
+      "description": "特定货币汇率在获取的数据中不存在时的错误。",
+      "placeholders": {
+          "currency": {
+            "content": "$1",
+            "example": "XYZ"
+          }
+        }
+    },
+    "invalidAmountError": {
+      "message": "请输入一个有效的正数金额。",
+      "description": "无效金额输入错误。"
+    },
+    "selectCurrenciesError": {
+      "message": "请选择有效的源货币和目标货币。",
+      "description": "未选择或选择了无效货币时的错误。"
+    },
+    "invalidBaseCurrencyError": {
+      "message": "无效的基础货币: $currency$。无法获取汇率。",
+      "description": "基础货币无效错误。",
+       "placeholders": {
+          "currency": {
+            "content": "$1",
+            "example": "USX"
+          }
+        }
+    },
+    "cannotFavoritePairError": {
+      "message": "无法收藏。请选择两个不同的有效货币。",
+      "description": "尝试收藏无效货币对时的错误。"
+    },
+    "copyError": {
+      "message": "复制到剪贴板失败。",
+      "description": "剪贴板复制失败错误。"
+    },
+    "unknownError": {
+      "message": "发生未知错误。",
+      "description": "通用备用错误信息。"
+    }
+  }
