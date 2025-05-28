@@ -94,14 +94,18 @@ h1 {
 .currency-selectors {
     display: flex;
     align-items: flex-end; /* Align items based on their bottom edge */
-    gap: 10px;
+    gap: 15px;
+    margin-bottom: 10px;
 }
+
 
 .currency-selector-wrapper {
     flex: 1;
     display: flex;
     flex-direction: column;
+    gap: 5px;
 }
+
 .currency-selector-wrapper label {
     font-size: 0.8em;
     margin-bottom: 4px;

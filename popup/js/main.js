@@ -167,20 +167,38 @@ const App = {
             }
         },
 
-        handleCurrencyChange: (type) => { // type is 'source' or 'target'
-            const selectedSource = UI.getSelectedSourceCurrency();
-            const selectedTarget = UI.getSelectedTargetCurrency();
+        handleCurrencyChange: (type) => {
+    const selectedSourceFromInput = UI.sourceCurrencyInput.value.toUpperCase();
+    const selectedTargetFromInput = UI.targetCurrencyInput.value.toUpperCase();
+    const selectedSourceFromSelect = UI.sourceCurrencySelect.value; // Get value from select
+    const selectedTargetFromSelect = UI.targetCurrencySelect.value; // Get value from select
 
-            if(type === 'source' && Utils.isValidCurrencyCode(selectedSource)) App.state.sourceCurrency = selectedSource;
-            if(type === 'target' && Utils.isValidCurrencyCode(selectedTarget)) App.state.targetCurrency = selectedTarget;
-            
-            // Store user's choice for next session
-            Storage.saveSetting('defaultSourceCurrency', App.state.sourceCurrency);
-            Storage.saveSetting('defaultTargetCurrency', App.state.targetCurrency);
+    let finalSource = App.state.sourceCurrency;
+    let finalTarget = App.state.targetCurrency;
 
-            App.updateFavoriteStarUI();
-            App.performConversion();
-        },
+    if (type === 'source') {
+        // Prioritize select if it was the source of change, otherwise input
+        // This logic might need refinement based on how you want search vs select to interact
+        finalSource = Utils.isValidCurrencyCode(selectedSourceFromSelect) ? selectedSourceFromSelect : selectedSourceFromInput;
+        if (Utils.isValidCurrencyCode(finalSource)) {
+             App.state.sourceCurrency = finalSource;
+             UI.sourceCurrencyInput.value = finalSource; // <-- 新增：确保input也更新
+        }
+    } else if (type === 'target') {
+        finalTarget = Utils.isValidCurrencyCode(selectedTargetFromSelect) ? selectedTargetFromSelect : selectedTargetFromInput;
+        if (Utils.isValidCurrencyCode(finalTarget)) {
+            App.state.targetCurrency = finalTarget;
+            UI.targetCurrencyInput.value = finalTarget; // <-- 新增：确保input也更新
+        }
+    }
+    
+    // Store user's choice for next session
+    Storage.saveSetting('defaultSourceCurrency', App.state.sourceCurrency);
+    Storage.saveSetting('defaultTargetCurrency', App.state.targetCurrency);
+
+    App.updateFavoriteStarUI();
+    App.performConversion();
+},
         handleSourceCurrencyChange: () => App.handlers.handleCurrencyChange('source'),
         handleTargetCurrencyChange: () => App.handlers.handleCurrencyChange('target'),
 
