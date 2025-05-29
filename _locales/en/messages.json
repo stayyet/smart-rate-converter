@@ -192,5 +192,8 @@
     "unknownError": {
       "message": "An unknown error occurred.",
       "description": "Generic fallback error message."
-    }
+    },
+    "noResultsFound": {
+  "message": "No currencies found matching your search.",
+  "description": "Message displayed when currency search yields no results."}
   }
