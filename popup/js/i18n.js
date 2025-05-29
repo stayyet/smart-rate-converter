@@ -103,7 +103,7 @@ const I18n = {
         const langToggleBtn = document.getElementById('langToggleBtn');
         if(langToggleBtn) {
             // This logic remains as it's direct text setting
-            langToggleBtn.textContent = I18n.currentLang === 'zh_CN' ? 'EN' : '中';
+            langToggleBtn.textContent = I18n.currentLang === 'zh_CN' ? 'EN' : 'CN';
         }
 
         if (typeof UI !== 'undefined' && UI.updateCurrencyDropdownsIfReady) {
