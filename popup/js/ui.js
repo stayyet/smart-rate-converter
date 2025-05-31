@@ -52,6 +52,26 @@ const UI = {
         });
     },
 
+    showCopyFeedback: () => {
+        const originalTitleKey = 'copyResultTooltip'; // Key for original tooltip
+        const copiedTooltipKey = 'copiedTooltip';     // Key for "Copied!" tooltip
+
+        // Prevent re-triggering animation if it's already active
+        if (UI.copyResultBtn.classList.contains('copied-feedback')) {
+            return;
+        }
+
+        UI.copyResultBtn.classList.add('copied-feedback');
+        UI.copyResultBtn.title = I18n.getLocalizedString(copiedTooltipKey);
+
+        // Revert after a short delay
+        setTimeout(() => {
+            UI.copyResultBtn.classList.remove('copied-feedback');
+            // Restore original title, considering current language
+            UI.copyResultBtn.title = I18n.getLocalizedString(originalTitleKey);
+        }, 1500); // 1.5 seconds, same duration
+    },
+
     populateCurrencyDropdown: (selectElement, inputElement, currencies, selectedCode) => {
         selectElement.innerHTML = ''; // Clear existing options
         // Filter/Search logic for inputElement would go here or in main.js handler

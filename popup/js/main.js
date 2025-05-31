@@ -167,6 +167,22 @@ const App = {
             }
         },
 
+        
+        handleCopyResult: () => {
+            const resultText = UI.conversionResultText.textContent;
+            if (resultText && resultText !== '---') {
+                const numericResult = resultText.replace(/[^\d.,-]/g, '').replace(',', '.');
+                navigator.clipboard.writeText(numericResult || resultText)
+                    .then(() => {
+                        UI.showCopyFeedback(); // Call the new UI function
+                    })
+                    .catch(err => {
+                        console.error('Copy failed:', err);
+                        UI.showError('copyError');
+                    });
+            }
+        },
+
         handleCurrencyChange: (type) => {
     const selectedSourceFromInput = UI.sourceCurrencyInput.value.toUpperCase();
     const selectedTargetFromInput = UI.targetCurrencyInput.value.toUpperCase();
@@ -269,20 +285,6 @@ const App = {
             UI.renderHistory([]);
         },
 
-        handleCopyResult: () => {
-            const resultText = UI.conversionResultText.textContent;
-            if (resultText && resultText !== '---') {
-                // Try to extract just the number if it includes currency symbol
-                const numericResult = resultText.replace(/[^\d.,-]/g, '').replace(',', '.'); // Basic cleaning
-                navigator.clipboard.writeText(numericResult || resultText)
-                    .then(() => {
-                        const originalTitle = UI.copyResultBtn.title;
-                        UI.copyResultBtn.title = I18n.getLocalizedString('copiedTooltip');
-                        setTimeout(() => { UI.copyResultBtn.title = originalTitle; }, 1500);
-                    })
-                    .catch(err => UI.showError('copyError'));
-            }
-        },
         
         handleLanguageToggle: () => {
             I18n.toggleLanguage();

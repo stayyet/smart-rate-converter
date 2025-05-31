@@ -156,12 +156,60 @@ h1 {
     min-height: 1.5em; /* Prevent layout jump */
 }
 
+/* In popup/css/main.css */
+
 .copy-btn {
-    margin-left: 5px; /* Space it from the result text */
-    padding: 2px; /* Fine-tune padding for SVG */
+    position: relative; /* << CRITICAL: This makes it the positioning context for absolute children */
+    display: inline-flex; /* Or flex, helps with centering if there were other elements in the button */
+    align-items: center;
+    justify-content: center;
+    width: 32px;  /* Adjust to fit your icon size and padding, e.g., 24px icon + 8px padding */
+    height: 32px; /* Adjust to fit your icon size and padding */
+    /* Your existing .icon-btn styles like border, background, cursor etc. should still apply */
+    /* For example: */
+    /* padding: 6px;  Ensure padding is accounted for in width/height or icons might get clipped */
+    /* border-radius: 4px; */
+    /* background-color: transparent; */
+    /* border: 1px solid #ccc; */
+    overflow: hidden; /* Important: clips anything that might go outside due to transform animations */
 }
+
+/* Styles for BOTH SVGs within the copy button */
 .copy-btn svg {
-    vertical-align: middle;
+    position: absolute;   /* << CRITICAL: Makes icons stack on top of each other */
+    top: 50%;             /* Center vertically */
+    left: 50%;            /* Center horizontally */
+    transform: translate(-50%, -50%) scale(1); /* Center precisely and set initial scale */
+    transition: opacity 0.2s ease-in-out, transform 0.2s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    /* Ensure width and height of SVGs are explicit if not already set in the <svg> tag */
+    /* width: 16px; (should match your <svg width="16"> attribute) */
+    /* height: 16px; (should match your <svg height="16"> attribute) */
+}
+
+/* Initially, the original copy icon is visible */
+.copy-btn .original-copy-icon {
+    opacity: 1;
+    /* transform: translate(-50%, -50%) scale(1); */ /* Already set in common svg style */
+    fill: currentColor; /* Or your desired default icon color */
+}
+
+/* Initially, the checkmark icon is hidden and scaled down */
+.copy-btn .checkmark-icon {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.3); /* Start smaller for the pop-in effect */
+    stroke: #4CAF50; /* Green color for the checkmark */
+}
+
+/* When .copied-feedback class is added to the button: */
+.copy-btn.copied-feedback .original-copy-icon {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.3);
+}
+
+.copy-btn.copied-feedback .checkmark-icon {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    /* stroke: #4CAF50; is already set on .copy-btn .checkmark-icon */
 }
 
 
@@ -235,3 +283,4 @@ h1 {
 #historyList li:hover {
     background-color: #f0f8ff;
 }
+

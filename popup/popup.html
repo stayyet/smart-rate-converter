@@ -47,11 +47,18 @@
                 <input type="number" id="amountInput" placeholder="__MSG_enterAmountPlaceholder__" step="any">
             </div>
 
-            <div class="result-area">
+                        <div class="result-area">
                 <label id="resultLabel">__MSG_resultLabel__</label>
                 <div id="conversionResultText" class="result-text">---</div>
                 <button id="copyResultBtn" class="icon-btn copy-btn" title="__MSG_copyResultTooltip__">
-                    <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"></path></svg>
+                    <!-- Original Copy Icon -->
+                    <svg class="original-copy-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                        <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"></path>
+                    </svg>
+                    <!-- Checkmark Icon (Initially hidden) -->
+                    <svg class="checkmark-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
                 </button>
             </div>
             <small id="rateInfoText" class="rate-info"></small>
