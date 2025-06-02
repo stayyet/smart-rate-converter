@@ -192,5 +192,20 @@
     "unknownError": {
       "message": "发生未知错误。",
       "description": "通用备用错误信息。"
-    }
+    },
+    "optionsPageTitle": { "message": "智能汇率转换 设置" },
+  "optionsApiKeyLabel": { "message": "ExchangeRate-API 密钥：" },
+  "optionsApiKeyHint": { "message": "从 exchangerate-api.com 获取您的免费API密钥。" },
+  "optionsSettingsSaved": { "message": "设置已保存！" },
+  "settingsTooltip": { "message": "打开设置" },
+  "apiKeyInvalidError": { "message": "您的API密钥无效。请在设置页面检查。" },
+  "apiKeyQuotaError": { "message": "您的API密钥已达到配额。请在设置页面检查或稍后再试。" },
+   "noCurrenciesToList": {
+    "message": "暂无可用货币",
+    "description": "当货币下拉列表中没有货币可列出时显示的消息。"
+  },
+  "loadingCurrencies": {
+    "message": "正在加载货币...",
+    "description": "正在获取货币时在货币下拉列表中显示的消息。"
+  }
   }

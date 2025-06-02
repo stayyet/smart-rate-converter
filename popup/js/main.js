@@ -4,58 +4,74 @@ const App = {
         sourceCurrency: '',
         targetCurrency: '',
         amount: null,
-        rates: null, // Store fetched rates for the current base
+        rates: null,
         ratesTimestamp: null,
         isRatesOffline: false,
-        allCurrencies: [] // {code, name}
+        allCurrencies: [] // {code, name} (name might be same as code from API)
     },
 
     init: async () => {
-        await I18n.init(); // Load language first
+        console.log("[App] init - 调用 I18n.init");
+        await I18n.init(); // Load language and messages first. I18n.applyLocale is called inside.
+        console.log("[App] init - I18n.init 完成");
 
-        UI.initEventListeners(App.handlers);
+        UI.initEventListeners(App.handlers); // Pass the handlers object
+        console.log("[App] init - UI 事件监听器初始化完成。");
+
         UI.hideError(); // Clear any previous errors
 
-        // Load settings, favorites, history
-        await App.loadInitialData();
+        await App.loadInitialData(); // Load settings, favorites, history
         
-        // Smart default currency
-        const browserLang = chrome.i18n.getUILanguage(); // e.g., "en-US", "zh-CN"
+        const browserLang = chrome.i18n.getUILanguage();
         let defaultSource = await Storage.loadSetting('defaultSourceCurrency', '');
         let defaultTarget = await Storage.loadSetting('defaultTargetCurrency', '');
 
         if (!defaultSource) {
             if (browserLang.startsWith("zh")) defaultSource = "CNY";
             else if (browserLang.startsWith("ja")) defaultSource = "JPY";
-            else if (browserLang.startsWith("eur") || browserLang.startsWith("de") || browserLang.startsWith("fr")) defaultSource = "EUR";
-            else defaultSource = "USD"; // Fallback
+            else if (["de", "fr", "es", "it", "pt", "nl"].some(lang => browserLang.startsWith(lang)) || browserLang.startsWith("eur")) defaultSource = "EUR";
+            else defaultSource = "USD";
         }
         if (!defaultTarget) {
-            defaultTarget = defaultSource === "USD" ? "EUR" : "USD";
+            defaultTarget = defaultSource === "USD" ? "EUR" : (defaultSource === "EUR" ? "USD" : (defaultSource === "CNY" ? "USD" : "USD"));
         }
         
-        App.state.sourceCurrency = defaultSource;
-        App.state.targetCurrency = defaultTarget;
+        App.state.sourceCurrency = defaultSource.toUpperCase();
+        App.state.targetCurrency = defaultTarget.toUpperCase();
+        console.log(`[App] init - 默认货币: ${App.state.sourceCurrency} -> ${App.state.targetCurrency}`);
 
-        // Fetch supported currencies from API
-        App.state.allCurrencies = await Api.fetchSupportedCurrencies();
+        console.log("[App] init - 正在获取支持的货币列表...");
+        try { // Add try-catch around API call for robustness
+            App.state.allCurrencies = await Api.fetchSupportedCurrencies();
+        } catch (error) {
+            console.error("[App] init - 调用 Api.fetchSupportedCurrencies 时发生错误:", error);
+            App.state.allCurrencies = []; // Ensure it's an empty array on error
+        }
+        
         if (App.state.allCurrencies && App.state.allCurrencies.length > 0) {
+            console.log("[App] init - 成功获取货币列表，数量:", App.state.allCurrencies.length);
             UI.setSupportedCurrencies(App.state.allCurrencies, App.state.sourceCurrency, App.state.targetCurrency);
         } else {
-            UI.showError('apiCurrenciesError'); // Failed to load currencies
+            console.error("[App] init - 未能加载货币列表或列表为空 (可能是 API 错误或网络问题)。");
+            UI.showError('apiCurrenciesError');
+            // **即使 API 失败，也调用 UI.setSupportedCurrencies 传入空数组**
+            // **这样 UI.updateCurrencyDropdownsIfReady 会被调用，然后 populateCurrencyDropdown 会显示 "暂无可用货币"**
+            UI.setSupportedCurrencies([], App.state.sourceCurrency, App.state.targetCurrency);
         }
         
-        // Set initial values in UI
-        UI.sourceCurrencyInput.value = App.state.sourceCurrency;
-        UI.targetCurrencyInput.value = App.state.targetCurrency;
-        // UI.sourceCurrencySelect.value = App.state.sourceCurrency; // if using select primarily
-        // UI.targetCurrencySelect.value = App.state.targetCurrency;
-
+        // 确保输入框的值与 App.state 同步
+        // UI.setSupportedCurrencies 内部的 populateCurrencyDropdown 应该已经处理了 selectedCode,
+        // 并且如果 inputElementToSync 存在，也会同步输入框。
+        // 所以下面的显式设置可能在多数情况下是多余的，但保留也无害。
+        if (UI.sourceCurrencyInput) UI.sourceCurrencyInput.value = App.state.sourceCurrency;
+        if (UI.targetCurrencyInput) UI.targetCurrencyInput.value = App.state.targetCurrency;
 
         App.updateFavoriteStarUI();
-        App.performConversion(); // Initial conversion if amount is preset or for rate display
+        App.performConversion();
+        console.log("[App] init - App 初始化全部完成。");
     },
 
+    // loadInitialData, performConversion, updateFavoriteStarUI 保持不变
     loadInitialData: async () => {
         const favorites = await Storage.getFavorites();
         UI.renderFavorites(favorites);
@@ -64,7 +80,7 @@ const App = {
         UI.renderHistory(history);
         
         const storedAmount = await Storage.loadSetting('lastAmount', '');
-        if (storedAmount) {
+        if (storedAmount && UI.amountInput) {
             UI.amountInput.value = storedAmount;
             App.state.amount = parseFloat(storedAmount);
         }
@@ -72,33 +88,28 @@ const App = {
 
     performConversion: async () => {
         UI.hideError();
+        const source = App.state.sourceCurrency;
+        const target = App.state.targetCurrency;
         const amount = UI.getAmount();
-        const source = App.state.sourceCurrency || UI.getSelectedSourceCurrency();
-        const target = App.state.targetCurrency || UI.getSelectedTargetCurrency();
 
         if (!Utils.isValidCurrencyCode(source) || !Utils.isValidCurrencyCode(target)) {
-             // UI.showError('selectCurrenciesError'); // Commented as it can be annoying on first load
             UI.updateResult(null);
             return;
         }
         if (source === target) {
-            App.state.rates = {[target]: 1}; // Self-conversion
+            App.state.rates = {[target]: 1};
             App.state.ratesTimestamp = Date.now();
             App.state.isRatesOffline = false;
-             if (Utils.isValidAmount(amount)) {
-                UI.updateResult(amount, target, amount, source, 1, false, Date.now());
-            } else {
-                UI.updateResult(null, null, null, null, 1, false, Date.now());
+            if (Utils.isValidAmount(amount)) {
+                UI.updateResult(amount, target, amount, source, 1, false, App.state.ratesTimestamp);
+            } else { 
+                UI.updateResult(null, target, 1, source, 1, false, App.state.ratesTimestamp);
             }
             return;
         }
 
-
-        // Fetch rates if base currency changed or rates are null/stale
-        // For simplicity, always fetch if base changed, API module handles caching
         const ratesData = await Api.fetchLatestRates(source);
         if (!ratesData || !ratesData.rates) {
-            // Error already shown by Api module
             UI.updateResult(null);
             return;
         }
@@ -106,75 +117,80 @@ const App = {
         App.state.ratesTimestamp = ratesData.timestamp;
         App.state.isRatesOffline = ratesData.isOffline;
 
+        if (App.state.rates[target] === undefined) {
+             UI.showError(I18n.getLocalizedString('rateUnavailableError', { currency: target }));
+             UI.updateResult(null, target, Utils.isValidAmount(amount) ? amount : 1, source, undefined, App.state.isRatesOffline, App.state.ratesTimestamp, ratesData.stale);
+             return;
+        }
 
+        const rate = App.state.rates[target];
         if (Utils.isValidAmount(amount)) {
-            if (App.state.rates && App.state.rates[target]) {
-                const rate = App.state.rates[target];
-                const result = amount * rate;
-                UI.updateResult(result, target, amount, source, rate, App.state.isRatesOffline, App.state.ratesTimestamp, ratesData.stale);
-                
-                // Save to history (only if actual conversion happens)
-                if (source !== target) { // Avoid logging self-conversion or initial empty state
-                     Storage.addHistoryItem({ from: source, to: target, amount, result, timestamp: Date.now() })
-                        .then(Storage.getHistory)
-                        .then(UI.renderHistory);
-                }
-                Storage.saveSetting('lastAmount', amount.toString());
-
-            } else {
-                UI.showError(I18n.getLocalizedString('rateUnavailableError', { currency: target }));
-                UI.updateResult(null);
+            const result = amount * rate;
+            UI.updateResult(result, target, amount, source, rate, App.state.isRatesOffline, App.state.ratesTimestamp, ratesData.stale);
+            
+            if (source !== target) {
+                 Storage.addHistoryItem({ from: source, to: target, amount, result, timestamp: Date.now() })
+                    .then(Storage.getHistory)
+                    .then(UI.renderHistory);
             }
+            Storage.saveSetting('lastAmount', amount.toString());
         } else {
-             // Show current rate info even if amount is invalid/empty
-             if (App.state.rates && App.state.rates[target]) {
-                const rate = App.state.rates[target];
-                 UI.updateResult(null, target, 1, source, rate, App.state.isRatesOffline, App.state.ratesTimestamp, ratesData.stale); // Show rate for 1 unit
-             } else {
-                 UI.updateResult(null);
-             }
+            UI.updateResult(null, target, 1, source, rate, App.state.isRatesOffline, App.state.ratesTimestamp, ratesData.stale);
         }
     },
     
     updateFavoriteStarUI: async () => {
-        const source = App.state.sourceCurrency || UI.getSelectedSourceCurrency();
-        const target = App.state.targetCurrency || UI.getSelectedTargetCurrency();
+        const source = App.state.sourceCurrency;
+        const target = App.state.targetCurrency;
         if (Utils.isValidCurrencyCode(source) && Utils.isValidCurrencyCode(target) && source !== target) {
             const isFav = await Storage.isFavorite({ from: source, to: target });
             UI.updateFavoriteStar(isFav);
         } else {
-            UI.updateFavoriteStar(false); // Not a valid pair for favoriting
+            UI.updateFavoriteStar(false);
         }
     },
 
-    // Event Handlers (to be called by UI event listeners)
+    // handlers 对象保持不变 (除了之前已修正的 handleOpenOptionsPage 位置)
     handlers: {
         handleAmountChange: () => {
+            if (!UI.amountInput) return;
             const amountVal = UI.amountInput.value;
-            if (amountVal === "") { // If user clears input
+            if (amountVal === "") {
                 App.state.amount = null;
-                Storage.saveSetting('lastAmount', ''); // Clear stored amount too
-                // UI.updateResult(null); // Keep rate info visible
-                App.performConversion(); // Re-run to show rate info without result
+                Storage.saveSetting('lastAmount', '');
+                App.performConversion();
                 return;
             }
             if (Utils.isValidAmount(amountVal)) {
                 App.state.amount = parseFloat(amountVal);
                 App.performConversion();
-            } else if (amountVal !== "") { // Non-empty but invalid
+            } else if (amountVal !== "") {
                 UI.showError('invalidAmountError');
-                // UI.updateResult(null);
             }
         },
 
+        handleOpenOptionsPage: () => {
+            console.log("[App.handlers] handleOpenOptionsPage 被调用！");
+            if (chrome.runtime.openOptionsPage) {
+                chrome.runtime.openOptionsPage();
+            } else {
+                console.warn("[App.handlers] chrome.runtime.openOptionsPage 不可用，使用 window.open。");
+                window.open(chrome.runtime.getURL('options.html'));
+            }
+        },
         
-        handleCopyResult: () => {
+        handleCopyResult: () => { 
+            if (!UI.conversionResultText || !UI.copyResultBtn) return;
             const resultText = UI.conversionResultText.textContent;
             if (resultText && resultText !== '---') {
                 const numericResult = resultText.replace(/[^\d.,-]/g, '').replace(',', '.');
                 navigator.clipboard.writeText(numericResult || resultText)
                     .then(() => {
-                        UI.showCopyFeedback(); // Call the new UI function
+                        if (typeof UI.showCopyFeedback === 'function') { 
+                            UI.showCopyFeedback();
+                        } else { 
+                            console.warn("UI.showCopyFeedback function not found.");
+                        }
                     })
                     .catch(err => {
                         console.error('Copy failed:', err);
@@ -184,59 +200,78 @@ const App = {
         },
 
         handleCurrencyChange: (type) => {
-    const selectedSourceFromInput = UI.sourceCurrencyInput.value.toUpperCase();
-    const selectedTargetFromInput = UI.targetCurrencyInput.value.toUpperCase();
-    const selectedSourceFromSelect = UI.sourceCurrencySelect.value; // Get value from select
-    const selectedTargetFromSelect = UI.targetCurrencySelect.value; // Get value from select
+            let changedCode = '';
+            let stateKeyToUpdate = '';
+            let inputElementToSync = null;
+            let selectElement = null;
+            let settingKey = '';
 
-    let finalSource = App.state.sourceCurrency;
-    let finalTarget = App.state.targetCurrency;
+            if (type === 'source') {
+                selectElement = UI.sourceCurrencySelect;
+                inputElementToSync = UI.sourceCurrencyInput;
+                stateKeyToUpdate = 'sourceCurrency';
+                settingKey = 'defaultSourceCurrency';
+            } else { // target
+                selectElement = UI.targetCurrencySelect;
+                inputElementToSync = UI.targetCurrencyInput;
+                stateKeyToUpdate = 'targetCurrency';
+                settingKey = 'defaultTargetCurrency';
+            }
 
-    if (type === 'source') {
-        // Prioritize select if it was the source of change, otherwise input
-        // This logic might need refinement based on how you want search vs select to interact
-        finalSource = Utils.isValidCurrencyCode(selectedSourceFromSelect) ? selectedSourceFromSelect : selectedSourceFromInput;
-        if (Utils.isValidCurrencyCode(finalSource)) {
-             App.state.sourceCurrency = finalSource;
-             UI.sourceCurrencyInput.value = finalSource; // <-- 新增：确保input也更新
-        }
-    } else if (type === 'target') {
-        finalTarget = Utils.isValidCurrencyCode(selectedTargetFromSelect) ? selectedTargetFromSelect : selectedTargetFromInput;
-        if (Utils.isValidCurrencyCode(finalTarget)) {
-            App.state.targetCurrency = finalTarget;
-            UI.targetCurrencyInput.value = finalTarget; // <-- 新增：确保input也更新
-        }
-    }
-    
-    // Store user's choice for next session
-    Storage.saveSetting('defaultSourceCurrency', App.state.sourceCurrency);
-    Storage.saveSetting('defaultTargetCurrency', App.state.targetCurrency);
+            // Determine if change came from <select> or <input>
+            // This logic assumes 'change' on input is blur/enter, select is on selection
+            // If 'this' is bound to the event target, we could check event.target.tagName
+            // For simplicity, we'll check select value first
+            if (selectElement && selectElement.value) {
+                 changedCode = selectElement.value;
+            } else if (inputElementToSync && inputElementToSync.value) {
+                 changedCode = inputElementToSync.value.trim().toUpperCase();
+            }
 
-    App.updateFavoriteStarUI();
-    App.performConversion();
-},
+
+            if (Utils.isValidCurrencyCode(changedCode)) {
+                if (App.state[stateKeyToUpdate] !== changedCode) {
+                    App.state[stateKeyToUpdate] = changedCode;
+                    if (inputElementToSync) inputElementToSync.value = changedCode;
+                    if (selectElement && selectElement.value !== changedCode) selectElement.value = changedCode; // Sync select if input changed
+                    Storage.saveSetting(settingKey, App.state[stateKeyToUpdate]);
+                    
+                    App.updateFavoriteStarUI();
+                    App.performConversion();
+                }
+            } else if (changedCode !== '') { // Invalid code typed and not empty
+                if (inputElementToSync) {
+                    inputElementToSync.value = App.state[stateKeyToUpdate]; // Revert input
+                }
+                 if (selectElement) { // Revert select as well
+                    selectElement.value = App.state[stateKeyToUpdate];
+                }
+                UI.showError(I18n.getLocalizedString('invalidBaseCurrencyError', { currency: changedCode }));
+            }
+            // If changedCode is empty, do nothing, wait for valid selection/input
+        },
         handleSourceCurrencyChange: () => App.handlers.handleCurrencyChange('source'),
         handleTargetCurrencyChange: () => App.handlers.handleCurrencyChange('target'),
 
         handleSwapCurrencies: () => {
-            const oldSource = App.state.sourceCurrency || UI.getSelectedSourceCurrency();
-            const oldTarget = App.state.targetCurrency || UI.getSelectedTargetCurrency();
+            const oldSource = App.state.sourceCurrency;
+            const oldTarget = App.state.targetCurrency;
             
             App.state.sourceCurrency = oldTarget;
             App.state.targetCurrency = oldSource;
 
-            UI.sourceCurrencyInput.value = App.state.sourceCurrency;
-            UI.targetCurrencyInput.value = App.state.targetCurrency;
-            // UI.sourceCurrencySelect.value = App.state.sourceCurrency; // if using select
-            // UI.targetCurrencySelect.value = App.state.targetCurrency;
+            if (UI.sourceCurrencyInput) UI.sourceCurrencyInput.value = App.state.sourceCurrency;
+            if (UI.sourceCurrencySelect) UI.sourceCurrencySelect.value = App.state.sourceCurrency;
+            if (UI.targetCurrencyInput) UI.targetCurrencyInput.value = App.state.targetCurrency;
+            if (UI.targetCurrencySelect) UI.targetCurrencySelect.value = App.state.targetCurrency;
 
             App.updateFavoriteStarUI();
             App.performConversion();
         },
 
         handleToggleFavorite: async () => {
-            const source = App.state.sourceCurrency || UI.getSelectedSourceCurrency();
-            const target = App.state.targetCurrency || UI.getSelectedTargetCurrency();
+            const source = App.state.sourceCurrency;
+            const target = App.state.targetCurrency;
 
             if (!Utils.isValidCurrencyCode(source) || !Utils.isValidCurrencyCode(target) || source === target) {
                 UI.showError('cannotFavoritePairError');
@@ -256,67 +291,58 @@ const App = {
         handleFavoriteClick: (from, to) => {
             App.state.sourceCurrency = from;
             App.state.targetCurrency = to;
-            UI.sourceCurrencyInput.value = from;
-            UI.targetCurrencyInput.value = to;
-            // UI.sourceCurrencySelect.value = from;
-            // UI.targetCurrencySelect.value = to;
+
+            if (UI.sourceCurrencyInput) UI.sourceCurrencyInput.value = from;
+            if (UI.sourceCurrencySelect) UI.sourceCurrencySelect.value = from;
+            if (UI.targetCurrencyInput) UI.targetCurrencyInput.value = to;
+            if (UI.targetCurrencySelect) UI.targetCurrencySelect.value = to;
 
             App.updateFavoriteStarUI();
             App.performConversion();
         },
         
-        handleHistoryClick: (item) => { // item = {from, to, amount, result, timestamp}
+        handleHistoryClick: (item) => {
             App.state.sourceCurrency = item.from;
             App.state.targetCurrency = item.to;
             App.state.amount = item.amount;
 
-            UI.sourceCurrencyInput.value = item.from;
-            UI.targetCurrencyInput.value = item.to;
-            UI.amountInput.value = item.amount;
-            // UI.sourceCurrencySelect.value = item.from;
-            // UI.targetCurrencySelect.value = item.to;
+            if (UI.sourceCurrencyInput) UI.sourceCurrencyInput.value = item.from;
+            if (UI.sourceCurrencySelect) UI.sourceCurrencySelect.value = item.from;
+            if (UI.targetCurrencyInput) UI.targetCurrencyInput.value = item.to;
+            if (UI.targetCurrencySelect) UI.targetCurrencySelect.value = item.to;
+            if (UI.amountInput) UI.amountInput.value = item.amount;
 
             App.updateFavoriteStarUI();
-            App.performConversion(); // This will also re-calculate and show result
+            App.performConversion();
         },
 
         handleClearHistory: async () => {
             await Storage.clearHistory();
             UI.renderHistory([]);
         },
-
         
         handleLanguageToggle: () => {
-            I18n.toggleLanguage();
-            // Re-perform conversion to update any language-specific formatting in result/rate info
-            App.performConversion();
+            console.log("[App.handlers] handleLanguageToggle 被调用。");
+            I18n.toggleLanguage(); 
+            // I18n.toggleLanguage -> I18n.applyLocale -> UI.updateCurrencyDropdownsIfReady
+            // And I18n.toggleLanguage now calls App.performConversion itself.
+            // So, this explicit call here is not strictly needed IF I18n.toggleLanguage ensures it.
+            // App.performConversion(); 
         },
         
         handleCurrencySearch: (inputElement, type, allCurrencies) => {
-            // Basic search example, you'd want something more robust
-            // This is just to show the idea for an input-based dropdown
             const searchTerm = inputElement.value.toLowerCase();
-            const selectElement = type === 'source' ? UI.sourceCurrencySelect : UI.targetCurrencySelect;
-            
             if (!allCurrencies || allCurrencies.length === 0) return;
-
             const filtered = allCurrencies.filter(c => 
                 c.code.toLowerCase().includes(searchTerm) || 
-                (c.name && c.name.toLowerCase().includes(searchTerm))
+                (I18n.getCurrencyFullName(c.code) || '').toLowerCase().includes(searchTerm)
             );
-            
-            // If using a custom dropdown, populate it here
-            // For now, let's filter the existing <select> if you decide to show it
-            // selectElement.innerHTML = ''; // Clear
-            // UI.populateCurrencyDropdown(selectElement, null, filtered, null);
-            // selectElement.style.display = filtered.length > 0 ? 'block' : 'none'; // Show/hide select
-            
-            // More advanced: create a <ul> dropdown below the input
-            console.log(`Search for ${type}: ${searchTerm}`, filtered);
+            console.log(`[App.handlers] Search for ${type}: ${searchTerm}`, filtered.map(f=>f.code));
         }
-
     }
 };
 
-// Initialize the app when the popup is opened
-document.addEventListener('DOMContentLoaded', App.init);
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("[DOMContentLoaded] DOM 已加载，准备调用 App.init。");
+    App.init();
+});

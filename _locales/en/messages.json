@@ -195,5 +195,20 @@
     },
     "noResultsFound": {
   "message": "No currencies found matching your search.",
-  "description": "Message displayed when currency search yields no results."}
+  "description": "Message displayed when currency search yields no results."},
+  "optionsPageTitle": { "message": "SmartRate Converter Settings" },
+  "optionsApiKeyLabel": { "message": "ExchangeRate-API Key:" },
+  "optionsApiKeyHint": { "message": "Get your free API key from exchangerate-api.com." },
+  "optionsSettingsSaved": { "message": "Settings Saved!" },
+  "settingsTooltip": { "message": "Open Settings" },
+  "apiKeyInvalidError": { "message": "Your API key is invalid. Please check it in the Settings page." },
+  "apiKeyQuotaError": { "message": "Your API key has reached its quota. Please check it in the Settings page or try again later." },
+  "noCurrenciesToList": {
+    "message": "No currencies available",
+    "description": "Message shown in currency dropdown when no currencies can be listed."
+  },
+  "loadingCurrencies": {
+    "message": "Loading currencies...",
+    "description": "Message shown in currency dropdown while currencies are being fetched."
+  }
   }
