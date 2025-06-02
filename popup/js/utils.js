@@ -34,9 +34,9 @@ const Utils = {
         // console.log(`[utils] English mode selected: using 2 decimal places for ${currencyCode}.`);
     } else if (standardizedPluginLocale.startsWith('zh')) {
         // 中文模式下，根据你的需求，之前是期望保留四位小数
-        formattingOptions.minimumFractionDigits = 4;
-        formattingOptions.maximumFractionDigits = 4;
-        // console.log(`[utils] Chinese mode selected: using 4 decimal places for ${currencyCode}.`);
+        formattingOptions.minimumFractionDigits = 2;
+        formattingOptions.maximumFractionDigits = 2;
+        // console.log(`[utils] Chinese mode selected: using 2 decimal places for ${currencyCode}.`);
     } else {
         // 其他未知语言或默认情况，也设置为两位小数
         formattingOptions.minimumFractionDigits = 2;

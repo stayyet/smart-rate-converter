@@ -35,7 +35,7 @@ header {
 }
 
 #logo {
-    width: 20px;
+    width: 20px; /* 您之前将 icon48.png 用于此，建议此尺寸至少 20x20 或 24x24 */
     height: 20px;
 }
 
@@ -93,7 +93,7 @@ h1 {
 
 .currency-selectors {
     display: flex;
-    align-items: flex-end; /* Align items based on their bottom edge */
+    align-items: flex-end; 
     gap: 15px;
     margin-bottom: 10px;
 }
@@ -112,31 +112,63 @@ h1 {
     color: #555;
 }
 
-#sourceCurrencyInput, #targetCurrencyInput, #sourceCurrencySelect, #targetCurrencySelect, #amountInput {
+/* Original combined rule */
+/* #sourceCurrencyInput, #targetCurrencyInput, #sourceCurrencySelect, #targetCurrencySelect, #amountInput {
     width: 100%;
-    padding: 8px;
+    padding: 8px; 
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 1em;
+} */
+
+/* ---- MODIFICATION START ---- */
+/* Common styles for all these inputs/selects */
+#sourceCurrencyInput, #targetCurrencyInput, 
+#sourceCurrencySelect, #targetCurrencySelect, 
+#amountInput {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+    /* box-sizing: border-box; is already set globally */
 }
-/* Hide select if input is primary, you might toggle this with JS */
-/* #sourceCurrencySelect, #targetCurrencySelect { display: none; } */
+
+/* Specific padding for text inputs to align with select options */
+#sourceCurrencyInput, 
+#targetCurrencyInput {
+    padding: 8px 8px 8px 12px; /* 上 右 下 左 - 增加左内边距 (例如从 8px 增加到 12px) */
+                               /* 或者您可以使用 padding: 8px; padding-left: 12px; */
+}
+
+/* Padding for select elements (保持或微调) */
+#sourceCurrencySelect, 
+#targetCurrencySelect {
+    padding: 8px; /* 保持原来的 padding，或者如果需要，微调 padding-left */
+    /* 例如: padding: 8px 8px 8px 4px; 如果选项文本默认就很靠左 */
+    text-align: left; /* 尝试确保文本左对齐 */
+}
+
+/* Padding for amount input (保持原来的统一 padding) */
+#amountInput {
+    padding: 8px;
+}
+/* ---- MODIFICATION END ---- */
 
 
 .icon-btn {
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 1.5em; /* For text icons like swap */
+    font-size: 1.5em;
     padding: 5px;
     color: #555;
-    line-height: 1; /* Important for icon vertical alignment */
+    line-height: 1;
 }
 .icon-btn:hover {
     color: #007bff;
 }
 .star-btn.favorited {
-    color: #ffc107; /* Gold for favorited */
+    color: #ffc107;
 }
 
 .amount-input-group, .result-area {
@@ -146,77 +178,56 @@ h1 {
 }
 .result-area {
     margin-top: 5px;
-    align-items: flex-start; /* Align label and result text */
+    align-items: flex-start;
 }
 
 .result-text {
     font-size: 1.4em;
     font-weight: bold;
-    color: #28a745; /* Green for result */
-    min-height: 1.5em; /* Prevent layout jump */
+    color: #28a745;
+    min-height: 1.5em;
 }
 
-/* In popup/css/main.css */
-
+/* Copy Button Styles - 您已有的这部分保持不变 */
 .copy-btn {
-    position: relative; /* << CRITICAL: This makes it the positioning context for absolute children */
-    display: inline-flex; /* Or flex, helps with centering if there were other elements in the button */
+    position: relative;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 32px;  /* Adjust to fit your icon size and padding, e.g., 24px icon + 8px padding */
-    height: 32px; /* Adjust to fit your icon size and padding */
-    /* Your existing .icon-btn styles like border, background, cursor etc. should still apply */
-    /* For example: */
-    /* padding: 6px;  Ensure padding is accounted for in width/height or icons might get clipped */
-    /* border-radius: 4px; */
-    /* background-color: transparent; */
-    /* border: 1px solid #ccc; */
-    overflow: hidden; /* Important: clips anything that might go outside due to transform animations */
+    width: 32px; 
+    height: 32px;
+    overflow: hidden;
 }
-
-/* Styles for BOTH SVGs within the copy button */
 .copy-btn svg {
-    position: absolute;   /* << CRITICAL: Makes icons stack on top of each other */
-    top: 50%;             /* Center vertically */
-    left: 50%;            /* Center horizontally */
-    transform: translate(-50%, -50%) scale(1); /* Center precisely and set initial scale */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1);
     transition: opacity 0.2s ease-in-out, transform 0.2s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-    /* Ensure width and height of SVGs are explicit if not already set in the <svg> tag */
-    /* width: 16px; (should match your <svg width="16"> attribute) */
-    /* height: 16px; (should match your <svg height="16"> attribute) */
 }
-
-/* Initially, the original copy icon is visible */
 .copy-btn .original-copy-icon {
     opacity: 1;
-    /* transform: translate(-50%, -50%) scale(1); */ /* Already set in common svg style */
-    fill: currentColor; /* Or your desired default icon color */
+    fill: currentColor;
 }
-
-/* Initially, the checkmark icon is hidden and scaled down */
 .copy-btn .checkmark-icon {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.3); /* Start smaller for the pop-in effect */
-    stroke: #4CAF50; /* Green color for the checkmark */
+    transform: translate(-50%, -50%) scale(0.3);
+    stroke: #4CAF50; /* 保持绿色 */
 }
-
-/* When .copied-feedback class is added to the button: */
 .copy-btn.copied-feedback .original-copy-icon {
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.3);
 }
-
 .copy-btn.copied-feedback .checkmark-icon {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
-    /* stroke: #4CAF50; is already set on .copy-btn .checkmark-icon */
 }
 
 
 .rate-info {
     font-size: 0.75em;
     color: #777;
-    margin-top: -8px; /* Pull it closer to result */
+    margin-top: -8px;
 }
 
 .action-btn {
@@ -266,9 +277,9 @@ h1 {
 
 #historyList {
     list-style: none;
-    max-height: 150px; /* Limit height and make scrollable if needed */
+    max-height: 150px;
     overflow-y: auto;
-    padding-right: 5px; /* For scrollbar */
+    padding-right: 5px;
 }
 #historyList li {
     padding: 6px 0;
@@ -283,4 +294,3 @@ h1 {
 #historyList li:hover {
     background-color: #f0f8ff;
 }
-
