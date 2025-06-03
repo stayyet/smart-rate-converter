@@ -1,12 +1,12 @@
 {
     "manifest_version": 3,
     "name": "__MSG_extName__",
-    "version": "0.1.0",
+    "version": "0.1.1", 
     "description": "__MSG_extDescription__",
     "default_locale": "zh_CN",
     "permissions": [
       "storage",
-      "activeTab", 
+      "activeTab",
       "alarms"     
     ],
     "host_permissions": [
@@ -24,5 +24,6 @@
       "16": "icons/icon16.png",
       "48": "icons/icon48.png",
       "128": "icons/icon128.png"
-    }
+    },
+    "options_page": "options.html" 
   }

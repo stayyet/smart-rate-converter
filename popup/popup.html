@@ -13,73 +13,61 @@
                 <img src="../icons/icon48.png" alt="Logo" id="logo">
                 <h1 id="appTitle">__MSG_extName__</h1>
             </div>
-            <button id="langToggleBtn" class="lang-btn">EN</button>
+            <!-- **** 修改开始：新的头部操作按钮区域 **** -->
+            <div class="header-actions">
+                <button id="langToggleBtn" class="lang-btn">EN</button> <!-- 文本会被JS动态设置 -->
+                <button id="settingsBtn" class="icon-btn settings-btn" title="__MSG_settingsTooltip__">
+                    <!-- 设置图标 SVG (齿轮) -->
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"/></svg>
+                </button>
+            </div>
+            <!-- **** 修改结束 **** -->
         </header>
 
+        <!-- ... 其余的 HTML 保持不变 ... -->
         <section id="favoritesSection" class="favorites-section">
             <h2 id="favoritesTitle">__MSG_favoritesTitle__</h2>
-            <div id="favoritesList" class="favorites-list">
-                <!-- Favorite buttons will be injected here -->
-            </div>
+            <div id="favoritesList" class="favorites-list"></div>
         </section>
-
         <section class="conversion-section">
             <div class="currency-selectors">
                 <div class="currency-selector-wrapper">
                     <label for="sourceCurrencyInput" id="sourceCurrencyLabel">__MSG_sourceCurrencyLabel__</label>
                     <input type="text" id="sourceCurrencyInput" placeholder="__MSG_searchCurrencyPlaceholder__">
-                    <select id="sourceCurrencySelect"></select> <!-- Will be populated dynamically or hidden if search is good -->
+                    <select id="sourceCurrencySelect"></select>
                 </div>
-
                 <button id="swapCurrenciesBtn" class="icon-btn" title="__MSG_swapCurrenciesTooltip__">⇆</button>
-                
                 <div class="currency-selector-wrapper">
                     <label for="targetCurrencyInput" id="targetCurrencyLabel">__MSG_targetCurrencyLabel__</label>
                     <input type="text" id="targetCurrencyInput" placeholder="__MSG_searchCurrencyPlaceholder__">
-                    <select id="targetCurrencySelect"></select> <!-- Will be populated dynamically -->
+                    <select id="targetCurrencySelect"></select>
                 </div>
             </div>
             <button id="addToFavoritesBtn" class="icon-btn star-btn" title="__MSG_addToFavoritesTooltip__">☆</button>
-
-
             <div class="amount-input-group">
                 <label for="amountInput" id="amountLabel">__MSG_amountLabel__</label>
                 <input type="number" id="amountInput" placeholder="__MSG_enterAmountPlaceholder__" step="any">
             </div>
-
-                        <div class="result-area">
+            <div class="result-area">
                 <label id="resultLabel">__MSG_resultLabel__</label>
                 <div id="conversionResultText" class="result-text">---</div>
                 <button id="copyResultBtn" class="icon-btn copy-btn" title="__MSG_copyResultTooltip__">
-                    <!-- Original Copy Icon -->
-                    <svg class="original-copy-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                        <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"></path>
-                    </svg>
-                    <!-- Checkmark Icon (Initially hidden) -->
-                    <svg class="checkmark-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
+                    <svg class="original-copy-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"></path></svg>
+                    <svg class="checkmark-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                 </button>
             </div>
             <small id="rateInfoText" class="rate-info"></small>
-             <button id="convertBtn" class="action-btn">__MSG_convertButton__</button>
+            <button id="convertBtn" class="action-btn">__MSG_convertButton__</button>
         </section>
-
-        <div id="errorMessagesContainer" class="error-container" style="display:none;">
-            <p id="errorMessageText"></p>
-        </div>
-
+        <div id="errorMessagesContainer" class="error-container" style="display:none;"><p id="errorMessageText"></p></div>
         <section id="historySection" class="history-section">
             <div class="history-header">
                 <h2 id="historyTitle">__MSG_historyTitle__</h2>
                 <button id="clearHistoryBtn" class="text-btn">__MSG_clearHistoryButton__</button>
             </div>
-            <ul id="historyList">
-                <!-- History items will be injected here -->
-            </ul>
+            <ul id="historyList"></ul>
         </section>
     </div>
-
     <script src="js/utils.js"></script>
     <script src="js/storage.js"></script>
     <script src="js/api.js"></script>

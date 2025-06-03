@@ -10,8 +10,8 @@ body {
     font-size: 14px;
     width: 380px; /* Adjust as needed */
     padding: 15px;
-    color: #333;
-    background-color: #f4f6f8;
+    color: #333; /* Or var(--text-color) if using themes */
+    background-color: #f4f6f8; /* Or var(--bg-color) if using themes */
 }
 
 .container {
@@ -20,12 +20,14 @@ body {
     gap: 15px;
 }
 
+/* --- MODIFIED HEADER STYLES --- */
 header {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* Key for alignment: logo-title on left, header-actions on right */
     align-items: center;
     padding-bottom: 10px;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #ddd; /* Or var(--border-color) */
+    margin-bottom: 10px; /* Added some margin below header */
 }
 
 .logo-title {
@@ -35,31 +37,80 @@ header {
 }
 
 #logo {
-    width: 20px; /* 您之前将 icon48.png 用于此，建议此尺寸至少 20x20 或 24x24 */
+    width: 20px; 
     height: 20px;
 }
 
-h1 {
+h1#appTitle { /* More specific selector for the title */
     font-size: 1.2em;
     font-weight: 600;
+    color: #333; /* Or var(--text-color) */
+    margin: 0; /* Ensure no default h1 margins interfere */
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px; /* <<<<<<< MODIFIED: Slightly reduced gap */
 }
 
 .lang-btn {
-    padding: 5px 10px;
-    border: 1px solid #ccc;
-    background-color: #fff;
+    padding: 4px 8px; 
+    border: 1px solid #ccc; 
+    background-color: #fff; 
+    color: #333; 
     border-radius: 4px;
     cursor: pointer;
+    font-size: 0.85em; 
+    line-height: 1.4; 
+    min-width: 30px; 
+    text-align: center;
+    transition: background-color 0.2s, border-color 0.2s; /* <<<<<<< ADDED/MODIFIED: Transition */
 }
 .lang-btn:hover {
-    background-color: #f0f0f0;
+    background-color: #f0f0f0; 
+    border-color: #bbb; /* <<<<<<< ADDED/MODIFIED: Hover border */
 }
+
+/* ---- MODIFICATION FOR SETTINGS ICON APPEARANCE ---- */
+.settings-btn {
+    background-color: transparent;
+    border: 1px solid transparent; /* Keeps size consistent, but transparent */
+    padding: 3px;                  /* <<<<<<< MODIFIED: Adjusted padding */
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    transition: background-color 0.2s; /* Smooth hover */
+}
+
+.settings-btn svg {
+    fill: #555;     /* <<<<<<< MODIFIED: Default icon color (dark gray) */
+    display: block;
+    width: 17px;    /* <<<<<<< MODIFIED: Adjusted size */
+    height: 17px;   /* <<<<<<< MODIFIED: Adjusted size */
+    transition: fill 0.2s; /* Smooth color change on hover */
+}
+
+.settings-btn:hover {
+    background-color: #e9e9e9; /* Lighter hover background */
+}
+
+.settings-btn:hover svg {
+    fill: #007bff; /* Accent color on hover */
+}
+/* ---- END OF MODIFICATION FOR SETTINGS ICON ---- */
+/* --- END OF MODIFIED HEADER STYLES --- */
+
 
 /* Favorites Section */
 .favorites-section h2, .history-section h2 {
     font-size: 0.9em;
-    color: #555;
+    color: #555; 
     margin-bottom: 8px;
+    font-weight: 600; 
 }
 .favorites-list {
     display: flex;
@@ -68,24 +119,25 @@ h1 {
 }
 .favorite-btn {
     padding: 6px 10px;
-    border: 1px solid #007bff;
-    color: #007bff;
-    background-color: #fff;
-    border-radius: 15px;
+    border: 1px solid #007bff; 
+    color: #007bff; 
+    background-color: #fff; 
+    border-radius: 15px; 
     font-size: 0.85em;
     cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
 }
 .favorite-btn:hover {
-    background-color: #e7f3ff;
+    background-color: #e7f3ff; 
 }
 
 
 /* Conversion Section */
 .conversion-section {
-    background-color: #fff;
+    background-color: #fff; 
     padding: 15px;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08); 
     display: flex;
     flex-direction: column;
     gap:12px;
@@ -94,10 +146,9 @@ h1 {
 .currency-selectors {
     display: flex;
     align-items: flex-end; 
-    gap: 15px;
+    gap: 12px; 
     margin-bottom: 10px;
 }
-
 
 .currency-selector-wrapper {
     flex: 1;
@@ -108,67 +159,54 @@ h1 {
 
 .currency-selector-wrapper label {
     font-size: 0.8em;
-    margin-bottom: 4px;
-    color: #555;
+    color: #555; 
+    font-weight: 500;
 }
 
-/* Original combined rule */
-/* #sourceCurrencyInput, #targetCurrencyInput, #sourceCurrencySelect, #targetCurrencySelect, #amountInput {
-    width: 100%;
-    padding: 8px; 
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1em;
-} */
-
-/* ---- MODIFICATION START ---- */
-/* Common styles for all these inputs/selects */
 #sourceCurrencyInput, #targetCurrencyInput, 
 #sourceCurrencySelect, #targetCurrencySelect, 
 #amountInput {
     width: 100%;
-    border: 1px solid #ccc;
+    border: 1px solid #ccc; 
     border-radius: 4px;
-    font-size: 1em;
-    /* box-sizing: border-box; is already set globally */
+    font-size: 1em; 
+    background-color: #fff; 
+    color: #333; 
 }
 
-/* Specific padding for text inputs to align with select options */
 #sourceCurrencyInput, 
 #targetCurrencyInput {
-    padding: 8px 8px 8px 12px; /* 上 右 下 左 - 增加左内边距 (例如从 8px 增加到 12px) */
-                               /* 或者您可以使用 padding: 8px; padding-left: 12px; */
+    padding: 8px 8px 8px 10px; 
 }
 
-/* Padding for select elements (保持或微调) */
 #sourceCurrencySelect, 
 #targetCurrencySelect {
-    padding: 8px; /* 保持原来的 padding，或者如果需要，微调 padding-left */
-    /* 例如: padding: 8px 8px 8px 4px; 如果选项文本默认就很靠左 */
-    text-align: left; /* 尝试确保文本左对齐 */
+    padding: 7px 8px; 
+    text-align: left; 
 }
 
-/* Padding for amount input (保持原来的统一 padding) */
 #amountInput {
     padding: 8px;
 }
-/* ---- MODIFICATION END ---- */
 
 
-.icon-btn {
+.icon-btn { 
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 1.5em;
-    padding: 5px;
-    color: #555;
-    line-height: 1;
+    font-size: 1.5em; 
+    padding: 5px;     
+    color: #555;     
+    line-height: 1;   
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 .icon-btn:hover {
-    color: #007bff;
+    color: #007bff; 
 }
 .star-btn.favorited {
-    color: #ffc107;
+    color: #ffc107; 
 }
 
 .amount-input-group, .result-area {
@@ -179,24 +217,31 @@ h1 {
 .result-area {
     margin-top: 5px;
     align-items: flex-start;
+    position: relative; 
+}
+.result-area label { 
+    font-size: 0.8em;
+    color: #555;
+    font-weight: 500;
 }
 
 .result-text {
-    font-size: 1.4em;
-    font-weight: bold;
-    color: #28a745;
-    min-height: 1.5em;
+    font-size: 1.5em; 
+    font-weight: 600; 
+    color: #28a745; 
+    min-height: 1.5em; 
+    line-height: 1.2; 
+    padding-right: 35px; 
 }
 
-/* Copy Button Styles - 您已有的这部分保持不变 */
 .copy-btn {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px; 
-    height: 32px;
+    position: absolute; 
+    top: 0;             
+    right: 0;
+    width: 28px; 
+    height: 28px;
     overflow: hidden;
+    border-radius: 4px;
 }
 .copy-btn svg {
     position: absolute;
@@ -204,15 +249,17 @@ h1 {
     left: 50%;
     transform: translate(-50%, -50%) scale(1);
     transition: opacity 0.2s ease-in-out, transform 0.2s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    width: 16px;  
+    height: 16px;
 }
 .copy-btn .original-copy-icon {
     opacity: 1;
-    fill: currentColor;
+    fill: #555; 
 }
 .copy-btn .checkmark-icon {
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.3);
-    stroke: #4CAF50; /* 保持绿色 */
+    stroke: #4CAF50; 
 }
 .copy-btn.copied-feedback .original-copy-icon {
     opacity: 0;
@@ -222,56 +269,66 @@ h1 {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
 }
+.copy-btn:hover .original-copy-icon {
+    fill: #007bff; 
+}
 
 
 .rate-info {
-    font-size: 0.75em;
-    color: #777;
-    margin-top: -8px;
+    font-size: 0.8em; 
+    color: #6c757d; 
+    margin-top: 0px; 
+    line-height: 1.3;
 }
 
-.action-btn {
-    padding: 10px;
-    background-color: #007bff;
-    color: white;
+.action-btn#convertBtn { 
+    padding: 10px 15px;
+    background-color: #007bff; 
+    color: white; 
     border: none;
     border-radius: 4px;
     font-size: 1em;
+    font-weight: 500;
     cursor: pointer;
     transition: background-color 0.2s;
+    margin-top: 5px; 
 }
-.action-btn:hover {
-    background-color: #0056b3;
+.action-btn#convertBtn:hover {
+    background-color: #0056b3; 
+}
+.action-btn#convertBtn:disabled {
+    background-color: #6c757d; 
+    cursor: not-allowed;
 }
 
-/* Error Messages */
+
 .error-container {
-    background-color: #ffebee;
-    color: #c62828;
+    background-color: #f8d7da; 
+    color: #721c24; 
     padding: 10px;
     border-radius: 4px;
     font-size: 0.9em;
-    border: 1px solid #ef9a9a;
+    border: 1px solid #f5c6cb; 
 }
 
-/* History Section */
 .history-section {
-    margin-top: 10px;
+    margin-top: 15px; 
 }
 .history-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 5px;
+    margin-bottom: 8px; 
 }
-.text-btn {
+.text-btn#clearHistoryBtn { 
     background: none;
     border: none;
-    color: #007bff;
+    color: #007bff; 
     cursor: pointer;
     font-size: 0.85em;
+    padding: 0; 
 }
-.text-btn:hover {
+.text-btn#clearHistoryBtn:hover {
     text-decoration: underline;
 }
 
@@ -279,18 +336,41 @@ h1 {
     list-style: none;
     max-height: 150px;
     overflow-y: auto;
-    padding-right: 5px;
+    border: 1px solid #eee; 
+    border-radius: 4px;
+    padding: 5px 0; 
 }
 #historyList li {
-    padding: 6px 0;
+    padding: 7px 10px; 
     font-size: 0.85em;
-    border-bottom: 1px dashed #eee;
+    border-bottom: 1px solid #f0f0f0; 
     cursor: pointer;
-    color: #444;
+    color: #444; 
+    transition: background-color 0.15s;
 }
 #historyList li:last-child {
     border-bottom: none;
 }
 #historyList li:hover {
-    background-color: #f0f8ff;
+    background-color: #f0f8ff; 
+}
+.history-date { 
+    color: #777; 
+    font-size: 0.9em; 
+    margin-left: 5px;
+}
+
+#historyList::-webkit-scrollbar {
+    width: 6px;
+}
+#historyList::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+    border-radius: 3px;
+}
+#historyList::-webkit-scrollbar-thumb {
+    background: #ccc; 
+    border-radius: 3px;
+}
+#historyList::-webkit-scrollbar-thumb:hover {
+    background: #aaa; 
 }
