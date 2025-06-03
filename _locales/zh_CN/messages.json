@@ -207,5 +207,29 @@
   "loadingCurrencies": {
     "message": "正在加载货币...",
     "description": "正在获取货币时在货币下拉列表中显示的消息。"
+  },
+  "optionsApiKeyPlaceholder": { 
+    "message": "请输入您的 API 密钥 (可选)", 
+    "description": "设置页面中 API 密钥输入框的占位提示文字。" 
+  },
+  "optionsDecimalPlacesLabel": { 
+    "message": "结果显示小数位数：", 
+    "description": "设置页面中小数位数选择下拉框的标签。" 
+  },
+  "optionsDecimalAuto": { 
+    "message": "自动 (按货币默认)", 
+    "description": "小数位数下拉框中的“自动”选项文本。" 
+  },
+  "optionsDecimalPlacesHint": { 
+    "message": "影响转换结果在弹出窗口中的显示方式。", 
+    "description": "设置页面中小数位数选择器下方的提示文字。" 
+  },
+  "optionsSaveButton": { 
+    "message": "保存设置", 
+    "description": "设置页面中保存按钮的文字。" 
+  },
+  "optionsDiscordLink": { 
+    "message": "加入我们的 Discord 交流群！", 
+    "description": "设置页面中指向 Discord 社群链接的文字。" 
   }
   }

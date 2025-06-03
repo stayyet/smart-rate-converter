@@ -210,5 +210,29 @@
   "loadingCurrencies": {
     "message": "Loading currencies...",
     "description": "Message shown in currency dropdown while currencies are being fetched."
+  },
+  "optionsApiKeyPlaceholder": { 
+    "message": "Enter your API key (optional)", 
+    "description": "Placeholder text for the API key input field in the options page." 
+  },
+  "optionsDecimalPlacesLabel": { 
+    "message": "Decimal Places for Result:", 
+    "description": "Label for the decimal places selection dropdown in the options page." 
+  },
+  "optionsDecimalAuto": { 
+    "message": "Auto (default by currency)", 
+    "description": "Text for the 'Auto' option in the decimal places dropdown." 
+  },
+  "optionsDecimalPlacesHint": { 
+    "message": "Affects how the converted amount is displayed in the popup.", 
+    "description": "Hint text below the decimal places selector in the options page." 
+  },
+  "optionsSaveButton": { 
+    "message": "Save Settings", 
+    "description": "Text for the save button on the options page." 
+  },
+  "optionsDiscordLink": { 
+    "message": "Join our Discord Community!", 
+    "description": "Text for the link to the Discord community on the options page." 
   }
   }
