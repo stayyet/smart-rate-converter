@@ -11,12 +11,12 @@ const App = {
     },
 
     init: async () => {
-        console.log("[App] init - 调用 I18n.init");
+        // console.log("[App] init - 调用 I18n.init");
         await I18n.init(); // Load language and messages first. I18n.applyLocale is called inside.
-        console.log("[App] init - I18n.init 完成");
+        // console.log("[App] init - I18n.init 完成");
 
         UI.initEventListeners(App.handlers); // Pass the handlers object
-        console.log("[App] init - UI 事件监听器初始化完成。");
+        // console.log("[App] init - UI 事件监听器初始化完成。");
 
         UI.hideError(); // Clear any previous errors
 
@@ -38,9 +38,9 @@ const App = {
         
         App.state.sourceCurrency = defaultSource.toUpperCase();
         App.state.targetCurrency = defaultTarget.toUpperCase();
-        console.log(`[App] init - 默认货币: ${App.state.sourceCurrency} -> ${App.state.targetCurrency}`);
+        // console.log(`[App] init - 默认货币: ${App.state.sourceCurrency} -> ${App.state.targetCurrency}`);
 
-        console.log("[App] init - 正在获取支持的货币列表...");
+        // console.log("[App] init - 正在获取支持的货币列表...");
         try { // Add try-catch around API call for robustness
             App.state.allCurrencies = await Api.fetchSupportedCurrencies();
         } catch (error) {
@@ -49,7 +49,7 @@ const App = {
         }
         
         if (App.state.allCurrencies && App.state.allCurrencies.length > 0) {
-            console.log("[App] init - 成功获取货币列表，数量:", App.state.allCurrencies.length);
+            // console.log("[App] init - 成功获取货币列表，数量:", App.state.allCurrencies.length);
             UI.setSupportedCurrencies(App.state.allCurrencies, App.state.sourceCurrency, App.state.targetCurrency);
         } else {
             console.error("[App] init - 未能加载货币列表或列表为空 (可能是 API 错误或网络问题)。");
@@ -68,7 +68,7 @@ const App = {
 
         App.updateFavoriteStarUI();
         App.performConversion();
-        console.log("[App] init - App 初始化全部完成。");
+        // console.log("[App] init - App 初始化全部完成。");
     },
 
     // loadInitialData, performConversion, updateFavoriteStarUI 保持不变
@@ -170,7 +170,7 @@ const App = {
         },
 
         handleOpenOptionsPage: () => {
-            console.log("[App.handlers] handleOpenOptionsPage 被调用！");
+            // console.log("[App.handlers] handleOpenOptionsPage 被调用！");
             if (chrome.runtime.openOptionsPage) {
                 chrome.runtime.openOptionsPage();
             } else {
@@ -322,7 +322,7 @@ const App = {
         },
         
         handleLanguageToggle: () => {
-            console.log("[App.handlers] handleLanguageToggle 被调用。");
+            // console.log("[App.handlers] handleLanguageToggle 被调用。");
             I18n.toggleLanguage(); 
             // I18n.toggleLanguage -> I18n.applyLocale -> UI.updateCurrencyDropdownsIfReady
             // And I18n.toggleLanguage now calls App.performConversion itself.
@@ -337,12 +337,12 @@ const App = {
                 c.code.toLowerCase().includes(searchTerm) || 
                 (I18n.getCurrencyFullName(c.code) || '').toLowerCase().includes(searchTerm)
             );
-            console.log(`[App.handlers] Search for ${type}: ${searchTerm}`, filtered.map(f=>f.code));
+            // console.log(`[App.handlers] Search for ${type}: ${searchTerm}`, filtered.map(f=>f.code));
         }
     }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("[DOMContentLoaded] DOM 已加载，准备调用 App.init。");
+    // console.log("[DOMContentLoaded] DOM 已加载，准备调用 App.init。");
     App.init();
 });

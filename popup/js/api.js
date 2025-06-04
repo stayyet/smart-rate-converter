@@ -23,14 +23,14 @@ const Api = {
 
         // 如果 _userApiKeyPromise 不存在，说明是首次尝试加载用户Key，或者需要重新加载
         if (!this._userApiKeyPromise) {
-            console.log("[Api] _getApiKeyToUse: 首次尝试加载用户 API Key 设置。");
+            // console.log("[Api] _getApiKeyToUse: 首次尝试加载用户 API Key 设置。");
             this._userApiKeyPromise = Storage.loadSetting('userApiKey', '') // 默认值为空字符串
                 .then(storedUserKey => {
                     if (storedUserKey && storedUserKey.trim() !== '') {
-                        console.log("[Api] _getApiKeyToUse: 找到并使用用户提供的 API Key。");
+                        // console.log("[Api] _getApiKeyToUse: 找到并使用用户提供的 API Key。");
                         return storedUserKey.trim();
                     }
-                    console.log("[Api] _getApiKeyToUse: 未找到用户 API Key 或为空，将使用默认 API Key。");
+                    // console.log("[Api] _getApiKeyToUse: 未找到用户 API Key 或为空，将使用默认 API Key。");
                     return this.DEFAULT_API_KEY; // 如果用户Key为空或未设置，则返回默认Key
                 })
                 .catch(error => {
@@ -67,7 +67,7 @@ const Api = {
             if (cachedEntry && cachedEntry.timestamp &&
                 (Date.now() - cachedEntry.timestamp < Api.SUPPORTED_CURRENCIES_CACHE_DURATION_MS) &&
                 cachedEntry.list && cachedEntry.list.length > 0) {
-                console.log("[Api] fetchSupportedCurrencies: Using persisted cache.");
+                // console.log("[Api] fetchSupportedCurrencies: Using persisted cache.");
                 Api._memoryCachedSupportedCurrencies = cachedEntry.list;
                 return Api._memoryCachedSupportedCurrencies;
             }
@@ -76,7 +76,7 @@ const Api = {
         }
 
         const apiKeyToUse = await Api._getApiKeyToUse(); // <<<< 使用新的密钥获取方法
-        console.log(`[Api] fetchSupportedCurrencies: No valid cache, fetching from API using ${apiKeyToUse === Api.DEFAULT_API_KEY ? 'default' : 'user'} key.`);
+        // console.log(`[Api] fetchSupportedCurrencies: No valid cache, fetching from API using ${apiKeyToUse === Api.DEFAULT_API_KEY ? 'default' : 'user'} key.`);
         const requestUrl = `${Api.BASE_URL}${apiKeyToUse}/latest/USD`;
         try {
             const response = await fetch(requestUrl);
@@ -97,7 +97,7 @@ const Api = {
                     const currencyList = Object.keys(data.conversion_rates).map(code => ({ code, name: code })).sort((a, b) => a.code.localeCompare(b.code));
                     Api._memoryCachedSupportedCurrencies = currencyList;
                     await Storage.set({ [Api.SUPPORTED_CURRENCIES_CACHE_KEY]: { list: currencyList, timestamp: Date.now() } });
-                    console.log("[Api] fetchSupportedCurrencies: Fetched from API and cached.");
+                    // console.log("[Api] fetchSupportedCurrencies: Fetched from API and cached.");
                     return currencyList;
                 } else {
                     Api._logApiError('fetchSupportedCurrencies - Invalid Data Format', data['error-type'] || 'Invalid data format', requestUrl, apiKeyToUse, response.status, data);
@@ -134,12 +134,12 @@ const Api = {
         const cachedEntry = cachedResult ? cachedResult[cacheKey] : null;
         
         if (cachedEntry && cachedEntry.timestamp && (Date.now() - cachedEntry.timestamp < Api.RATES_CACHE_DURATION_MS)) {
-            console.log(`[Api] fetchLatestRates: Using cached rates for ${baseCurrency}.`);
+            // console.log(`[Api] fetchLatestRates: Using cached rates for ${baseCurrency}.`);
             return { ...cachedEntry, isOffline: true };
         }
 
         const apiKeyToUse = await Api._getApiKeyToUse(); // <<<< 使用新的密钥获取方法
-        console.log(`[Api] fetchLatestRates: Fetching new rates for ${baseCurrency} using ${apiKeyToUse === Api.DEFAULT_API_KEY ? 'default' : 'user'} key.`);
+        // console.log(`[Api] fetchLatestRates: Fetching new rates for ${baseCurrency} using ${apiKeyToUse === Api.DEFAULT_API_KEY ? 'default' : 'user'} key.`);
         UI.toggleLoading(true);
         const requestUrl = `${Api.BASE_URL}${apiKeyToUse}/latest/${baseCurrency}`;
         try {
@@ -167,7 +167,7 @@ const Api = {
                     timestamp: data.time_last_update_unix ? data.time_last_update_unix * 1000 : Date.now()
                 };
                 await Storage.saveRatesCache(baseCurrency, ratesData);
-                console.log(`[Api] fetchLatestRates: Fetched new rates for ${baseCurrency} and cached.`);
+                // console.log(`[Api] fetchLatestRates: Fetched new rates for ${baseCurrency} and cached.`);
                 return { ...ratesData, isOffline: false };
             } else {
                 Api._logApiError('fetchLatestRates - Invalid Data Format', data['error-type'] || 'Invalid data format', requestUrl, apiKeyToUse, response.status, data);
@@ -208,6 +208,6 @@ const Api = {
 // resetApiKeyCache: function() {
 //     this._userApiKeyPromise = null;
 //     this._currentEffectiveApiKey = null;
-//     console.log("[Api] API Key cache reset. Will reload from storage on next call.");
+//     // console.log("[Api] API Key cache reset. Will reload from storage on next call.");
 // }
 // 这样，每次打开 popup 都会从 Storage 重新读取 userApiKey。

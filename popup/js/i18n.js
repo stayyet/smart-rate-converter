@@ -138,7 +138,7 @@ const I18n = {
      * Applies the current locale to the UI elements and triggers necessary updates.
      */
     applyLocale: function() {
-        console.log(`[I18n] applyLocale called for language: ${this.currentLang}`);
+        // console.log(`[I18n] applyLocale called for language: ${this.currentLang}`);
         this._currencyNameCache = {}; // Clear currency name cache
         document.documentElement.lang = this.currentLang.split('_')[0]; // Set HTML lang attribute
         
@@ -172,7 +172,7 @@ const I18n = {
 
         // Trigger UI updates for elements that depend on locale (like currency dropdowns)
         if (typeof UI !== 'undefined' && UI.updateCurrencyDropdownsIfReady && UI._allCurrencies && UI._allCurrencies.length > 0) {
-             console.log("[I18n] Language changed, calling UI.updateCurrencyDropdownsIfReady() to re-localize dropdowns.");
+             // console.log("[I18n] Language changed, calling UI.updateCurrencyDropdownsIfReady() to re-localize dropdowns.");
              UI.updateCurrencyDropdownsIfReady();
         }
         
@@ -195,7 +195,7 @@ const I18n = {
      */
     toggleLanguage: async function() { // Marked as async due to Storage.saveSetting
         this.currentLang = (this.currentLang === 'zh_CN') ? 'en' : 'zh_CN';
-        console.log(`[I18n] Language toggled to: ${this.currentLang}`);
+        // console.log(`[I18n] Language toggled to: ${this.currentLang}`);
         await Storage.saveSetting('userLanguage', this.currentLang);
         this.applyLocale(); // Apply changes immediately
 
@@ -210,7 +210,7 @@ const I18n = {
      * Initializes the I18n module: loads messages and sets the initial language.
      */
     init: async function() {
-        console.log("[I18n] init - Initializing I18n module...");
+        // console.log("[I18n] init - Initializing I18n module...");
         
         // Load messages for all supported languages
         // Ensure your _locales folder has 'en' and 'zh_CN' subfolders with messages.json
@@ -232,7 +232,7 @@ const I18n = {
             }
         }
         this.currentLang = initialLang;
-        console.log(`[I18n] init - Initial language set to: ${this.currentLang}`);
+        // console.log(`[I18n] init - Initial language set to: ${this.currentLang}`);
         
         // Gracefully handle if messages for the determined language failed to load
         let currentMessages = this._messages[this.currentLang];
@@ -249,6 +249,6 @@ const I18n = {
         }
 
         this.applyLocale(); // Apply the initial locale
-        console.log("[I18n] init - I18n module initialization complete.");
+        // console.log("[I18n] init - I18n module initialization complete.");
     }
 };

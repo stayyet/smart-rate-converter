@@ -23,7 +23,7 @@ const UI = {
     _allCurrencies: [], // 将存储从 API 获取的 {code, name} 列表
 
     initEventListeners: (handlers) => {
-        console.log("[UI] initEventListeners - 开始初始化事件监听器。");
+        // console.log("[UI] initEventListeners - 开始初始化事件监听器。");
         
         // 为元素存在性添加检查，使其更健壮
         if (UI.sourceCurrencyInput) {
@@ -62,7 +62,7 @@ const UI = {
         // **** 新增/修改：为 settingsBtn 附加事件监听器 ****
         if (UI.settingsBtn) {
             UI.settingsBtn.addEventListener('click', handlers.handleOpenOptionsPage);
-            console.log("[UI] settingsBtn 事件监听器已附加。");
+            // console.log("[UI] settingsBtn 事件监听器已附加。");
         } else {
             // 如果 HTML 中没有 settingsBtn，这个警告是正常的
             // console.warn("[UI] settingsBtn 元素未在 DOM 中找到。如果您已添加该按钮，请检查 HTML ID。");
@@ -153,7 +153,7 @@ const UI = {
     },
     
     updateCurrencyDropdownsIfReady: () => {
-        console.log("[UI] updateCurrencyDropdownsIfReady 被调用。");
+        // console.log("[UI] updateCurrencyDropdownsIfReady 被调用。");
         if (UI._allCurrencies && UI._allCurrencies.length > 0) {
             const sourceVal = (typeof App !== 'undefined' && App.state && App.state.sourceCurrency)
                               ? App.state.sourceCurrency
@@ -163,7 +163,7 @@ const UI = {
                               ? App.state.targetCurrency
                               : (UI.targetCurrencyInput ? UI.targetCurrencyInput.value : (UI.targetCurrencySelect ? UI.targetCurrencySelect.value : ''));
 
-            console.log(`[UI] 重新填充下拉列表。源: ${sourceVal}, 目标: ${targetVal}`);
+            // console.log(`[UI] 重新填充下拉列表。源: ${sourceVal}, 目标: ${targetVal}`);
 
             if (UI.sourceCurrencySelect) {
                 UI.populateCurrencyDropdown(UI.sourceCurrencySelect, UI.sourceCurrencyInput, UI._allCurrencies, sourceVal);
@@ -179,7 +179,7 @@ const UI = {
     },
 
     setSupportedCurrencies: (currencies, defaultSource, defaultTarget) => {
-        console.log("[UI] setSupportedCurrencies - 接收到的货币数量:", currencies ? currencies.length : 0, "默认源:", defaultSource, "默认目标:", defaultTarget);
+        // console.log("[UI] setSupportedCurrencies - 接收到的货币数量:", currencies ? currencies.length : 0, "默认源:", defaultSource, "默认目标:", defaultTarget);
         UI._allCurrencies = currencies || []; 
 
         if (UI.sourceCurrencyInput) UI.sourceCurrencyInput.value = defaultSource || '';

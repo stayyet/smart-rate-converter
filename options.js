@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error("Storage module not found. Cannot load settings.");
             return;
         }
-        console.log("Loading settings for options page...");
+        // console.log("Loading settings for options page...");
         try {
             const userApiKey = await Storage.loadSetting('userApiKey', '');
             if (apiKeyInput) apiKeyInput.value = userApiKey;
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const decimalPlaces = await Storage.loadSetting('decimalPlaces', 'auto'); // Default to 'auto'
             if (decimalPlacesSelect) decimalPlacesSelect.value = decimalPlaces;
             
-            console.log("Settings loaded:", { userApiKey, decimalPlaces });
+            // console.log("Settings loaded:", { userApiKey, decimalPlaces });
         } catch (error) {
             console.error("Error loading settings:", error);
             if (statusMessage) {
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 await Storage.saveSetting('userApiKey', userApiKey);
                 await Storage.saveSetting('decimalPlaces', decimalPlaces);
                 
-                console.log("Settings saved:", { userApiKey, decimalPlaces });
+                // console.log("Settings saved:", { userApiKey, decimalPlaces });
 
                 if (statusMessage) {
                     statusMessage.textContent = chrome.i18n.getMessage('optionsSettingsSaved') || 'Settings Saved!';
