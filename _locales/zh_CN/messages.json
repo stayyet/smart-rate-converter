@@ -231,5 +231,9 @@
   "optionsDiscordLink": { 
     "message": "加入我们的 Discord 交流群！", 
     "description": "设置页面中指向 Discord 社群链接的文字。" 
+  },
+  "optionsPrivacyPolicyLink": {
+    "message": "隐私政策",
+    "description": "设置中指向隐私政策页面的链接文本。"
   }
   }

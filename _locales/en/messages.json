@@ -234,5 +234,9 @@
   "optionsDiscordLink": { 
     "message": "Join our Discord Community!", 
     "description": "Text for the link to the Discord community on the options page." 
-  }
+  },
+   "optionsPrivacyPolicyLink": {
+    "message": "Privacy Policy",
+    "description": "Text for the link to the Privacy Policy page in the options."
+   }
   }

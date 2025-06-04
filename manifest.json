@@ -6,7 +6,6 @@
     "default_locale": "zh_CN",
     "permissions": [
       "storage",
-      "activeTab",
       "alarms"     
     ],
     "host_permissions": [
