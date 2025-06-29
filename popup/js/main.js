@@ -22,11 +22,13 @@ const App = {
 
         await App.loadInitialData(); // Load settings, favorites, history
         
-        const browserLang = chrome.i18n.getUILanguage();
+        // ** 这部分逻辑现在会加载上次关闭前保存的货币对 **
         let defaultSource = await Storage.loadSetting('defaultSourceCurrency', '');
         let defaultTarget = await Storage.loadSetting('defaultTargetCurrency', '');
 
+        // 如果存储中没有，则根据浏览器语言设置初始默认值
         if (!defaultSource) {
+            const browserLang = chrome.i18n.getUILanguage();
             if (browserLang.startsWith("zh")) defaultSource = "CNY";
             else if (browserLang.startsWith("ja")) defaultSource = "JPY";
             else if (["de", "fr", "es", "it", "pt", "nl"].some(lang => browserLang.startsWith(lang)) || browserLang.startsWith("eur")) defaultSource = "EUR";
@@ -54,15 +56,9 @@ const App = {
         } else {
             console.error("[App] init - 未能加载货币列表或列表为空 (可能是 API 错误或网络问题)。");
             UI.showError('apiCurrenciesError');
-            // **即使 API 失败，也调用 UI.setSupportedCurrencies 传入空数组**
-            // **这样 UI.updateCurrencyDropdownsIfReady 会被调用，然后 populateCurrencyDropdown 会显示 "暂无可用货币"**
             UI.setSupportedCurrencies([], App.state.sourceCurrency, App.state.targetCurrency);
         }
         
-        // 确保输入框的值与 App.state 同步
-        // UI.setSupportedCurrencies 内部的 populateCurrencyDropdown 应该已经处理了 selectedCode,
-        // 并且如果 inputElementToSync 存在，也会同步输入框。
-        // 所以下面的显式设置可能在多数情况下是多余的，但保留也无害。
         if (UI.sourceCurrencyInput) UI.sourceCurrencyInput.value = App.state.sourceCurrency;
         if (UI.targetCurrencyInput) UI.targetCurrencyInput.value = App.state.targetCurrency;
 
@@ -71,7 +67,6 @@ const App = {
         // console.log("[App] init - App 初始化全部完成。");
     },
 
-    // loadInitialData, performConversion, updateFavoriteStarUI 保持不变
     loadInitialData: async () => {
         const favorites = await Storage.getFavorites();
         UI.renderFavorites(favorites);
@@ -150,7 +145,6 @@ const App = {
         }
     },
 
-    // handlers 对象保持不变 (除了之前已修正的 handleOpenOptionsPage 位置)
     handlers: {
         handleAmountChange: () => {
             if (!UI.amountInput) return;
@@ -170,11 +164,9 @@ const App = {
         },
 
         handleOpenOptionsPage: () => {
-            // console.log("[App.handlers] handleOpenOptionsPage 被调用！");
             if (chrome.runtime.openOptionsPage) {
                 chrome.runtime.openOptionsPage();
             } else {
-                console.warn("[App.handlers] chrome.runtime.openOptionsPage 不可用，使用 window.open。");
                 window.open(chrome.runtime.getURL('options.html'));
             }
         },
@@ -218,47 +210,48 @@ const App = {
                 settingKey = 'defaultTargetCurrency';
             }
 
-            // Determine if change came from <select> or <input>
-            // This logic assumes 'change' on input is blur/enter, select is on selection
-            // If 'this' is bound to the event target, we could check event.target.tagName
-            // For simplicity, we'll check select value first
             if (selectElement && selectElement.value) {
                  changedCode = selectElement.value;
             } else if (inputElementToSync && inputElementToSync.value) {
                  changedCode = inputElementToSync.value.trim().toUpperCase();
             }
 
-
             if (Utils.isValidCurrencyCode(changedCode)) {
                 if (App.state[stateKeyToUpdate] !== changedCode) {
                     App.state[stateKeyToUpdate] = changedCode;
                     if (inputElementToSync) inputElementToSync.value = changedCode;
-                    if (selectElement && selectElement.value !== changedCode) selectElement.value = changedCode; // Sync select if input changed
+                    if (selectElement && selectElement.value !== changedCode) selectElement.value = changedCode;
+                    
+                    // 这是保存货币对的主要逻辑，当用户手动选择时触发
                     Storage.saveSetting(settingKey, App.state[stateKeyToUpdate]);
                     
                     App.updateFavoriteStarUI();
                     App.performConversion();
                 }
-            } else if (changedCode !== '') { // Invalid code typed and not empty
+            } else if (changedCode !== '') { 
                 if (inputElementToSync) {
-                    inputElementToSync.value = App.state[stateKeyToUpdate]; // Revert input
+                    inputElementToSync.value = App.state[stateKeyToUpdate]; 
                 }
-                 if (selectElement) { // Revert select as well
+                 if (selectElement) { 
                     selectElement.value = App.state[stateKeyToUpdate];
                 }
                 UI.showError(I18n.getLocalizedString('invalidBaseCurrencyError', { currency: changedCode }));
             }
-            // If changedCode is empty, do nothing, wait for valid selection/input
         },
         handleSourceCurrencyChange: () => App.handlers.handleCurrencyChange('source'),
         handleTargetCurrencyChange: () => App.handlers.handleCurrencyChange('target'),
 
-        handleSwapCurrencies: () => {
+        // **** MODIFIED START: Added async and storage saving ****
+        handleSwapCurrencies: async () => {
             const oldSource = App.state.sourceCurrency;
             const oldTarget = App.state.targetCurrency;
             
             App.state.sourceCurrency = oldTarget;
             App.state.targetCurrency = oldSource;
+
+            // Save the swapped currencies to storage
+            await Storage.saveSetting('defaultSourceCurrency', App.state.sourceCurrency);
+            await Storage.saveSetting('defaultTargetCurrency', App.state.targetCurrency);
 
             if (UI.sourceCurrencyInput) UI.sourceCurrencyInput.value = App.state.sourceCurrency;
             if (UI.sourceCurrencySelect) UI.sourceCurrencySelect.value = App.state.sourceCurrency;
@@ -268,6 +261,7 @@ const App = {
             App.updateFavoriteStarUI();
             App.performConversion();
         },
+        // **** MODIFIED END ****
 
         handleToggleFavorite: async () => {
             const source = App.state.sourceCurrency;
@@ -288,9 +282,14 @@ const App = {
             Storage.getFavorites().then(UI.renderFavorites);
         },
 
-        handleFavoriteClick: (from, to) => {
+        // **** MODIFIED START: Added async and storage saving ****
+        handleFavoriteClick: async (from, to) => {
             App.state.sourceCurrency = from;
             App.state.targetCurrency = to;
+
+            // Save the selected favorite pair to storage
+            await Storage.saveSetting('defaultSourceCurrency', from);
+            await Storage.saveSetting('defaultTargetCurrency', to);
 
             if (UI.sourceCurrencyInput) UI.sourceCurrencyInput.value = from;
             if (UI.sourceCurrencySelect) UI.sourceCurrencySelect.value = from;
@@ -300,11 +299,17 @@ const App = {
             App.updateFavoriteStarUI();
             App.performConversion();
         },
+        // **** MODIFIED END ****
         
-        handleHistoryClick: (item) => {
+        // **** MODIFIED START: Added async and storage saving ****
+        handleHistoryClick: async (item) => {
             App.state.sourceCurrency = item.from;
             App.state.targetCurrency = item.to;
             App.state.amount = item.amount;
+
+            // Save the selected history pair to storage
+            await Storage.saveSetting('defaultSourceCurrency', item.from);
+            await Storage.saveSetting('defaultTargetCurrency', item.to);
 
             if (UI.sourceCurrencyInput) UI.sourceCurrencyInput.value = item.from;
             if (UI.sourceCurrencySelect) UI.sourceCurrencySelect.value = item.from;
@@ -315,6 +320,7 @@ const App = {
             App.updateFavoriteStarUI();
             App.performConversion();
         },
+        // **** MODIFIED END ****
 
         handleClearHistory: async () => {
             await Storage.clearHistory();
@@ -322,12 +328,7 @@ const App = {
         },
         
         handleLanguageToggle: () => {
-            // console.log("[App.handlers] handleLanguageToggle 被调用。");
             I18n.toggleLanguage(); 
-            // I18n.toggleLanguage -> I18n.applyLocale -> UI.updateCurrencyDropdownsIfReady
-            // And I18n.toggleLanguage now calls App.performConversion itself.
-            // So, this explicit call here is not strictly needed IF I18n.toggleLanguage ensures it.
-            // App.performConversion(); 
         },
         
         handleCurrencySearch: (inputElement, type, allCurrencies) => {
@@ -337,12 +338,10 @@ const App = {
                 c.code.toLowerCase().includes(searchTerm) || 
                 (I18n.getCurrencyFullName(c.code) || '').toLowerCase().includes(searchTerm)
             );
-            // console.log(`[App.handlers] Search for ${type}: ${searchTerm}`, filtered.map(f=>f.code));
         }
     }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    // console.log("[DOMContentLoaded] DOM 已加载，准备调用 App.init。");
     App.init();
 });
